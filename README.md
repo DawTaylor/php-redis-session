@@ -4,7 +4,7 @@ This is a simple implementation of Redis as a PHP session manager behind the cod
 
 This implementation was made to ease the migration process of a legacy PHP 5.6 application.
 
-php:5.6-apache [Dockerfile](Dockerfile)
+php:5.6-apache [Dockerfile](https://github.com/DawTaylor/php-redis-session/blob/master/Dockerfile)
 
 ## How to use
 
