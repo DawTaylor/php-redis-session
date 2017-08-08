@@ -1,18 +1,29 @@
 FROM php:5.6-apache
 
-MAINTAINER DawTaylor <adalbertotaylor84@gmail.com>
+RUN apt-get update && \
+  apt-get install unzip wget -y && \
+  cd /tmp && \
+  wget https://github.com/phpredis/phpredis/archive/master.zip -O phpredis.zip && \
+  unzip -o /tmp/phpredis.zip && \
+  mv /tmp/phpredis-* /tmp/phpredis && \
+  cd /tmp/phpredis && \
+  phpize && \
+  ./configure && \
+  make && \
+  make install && \
+  mkdir -p /etc/php5/mods-available/ && \
+  touch /etc/php5/mods-available/redis.ini && \
+  echo extension=redis.so > /etc/php5/mods-available/redis.ini && \
+  ln -s /etc/php5/mods-available/redis.ini /usr/local/etc/php/conf.d && \
+  echo "session.save_handler = redis\nsession.save_path = tcp://redis/6379" >> /usr/local/etc/php/conf.d/docker-php-ext-redis.ini && \
+  apt-get remove unzip wget -y && \
+  apt-get clean
 
-COPY ./redis_install /usr/local/bin/redis_install
-RUN chmod a+x /usr/local/bin/redis_install 
-RUN redis_install
-
-RUN sed -i 's/DocumentRoot \/var\/www\/html/DocumentRoot \/var\/www\/html/' /etc/apache2/sites-available/000-default.conf
-RUN sed -i 's/DocumentRoot \/var\/www\/html/DocumentRoot \/var\/www\/html/' /etc/apache2/sites-available/default-ssl.conf
-
-RUN usermod -u 1000 www-data
-RUN a2enmod rewrite
-
-RUN chown -R www-data:www-data /var/www/html
+RUN sed -i 's/DocumentRoot \/var\/www\/html/DocumentRoot \/var\/www\/html/' /etc/apache2/sites-available/000-default.conf && \
+  sed -i 's/DocumentRoot \/var\/www\/html/DocumentRoot \/var\/www\/html/' /etc/apache2/sites-available/default-ssl.conf && \
+  usermod -u 1000 www-data && \
+  a2enmod rewrite && \
+  chown -R www-data:www-data /var/www/html/
 
 WORKDIR /var/www/html
 VOLUME /var/www/html
