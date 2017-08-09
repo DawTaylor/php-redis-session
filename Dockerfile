@@ -17,7 +17,8 @@ RUN apt-get update && \
   ln -s /etc/php5/mods-available/redis.ini /usr/local/etc/php/conf.d && \
   echo "session.save_handler = redis\nsession.save_path = tcp://redis/6379" >> /usr/local/etc/php/conf.d/docker-php-ext-redis.ini && \
   apt-get remove unzip wget -y && \
-  apt-get clean
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/
 
 RUN sed -i 's/DocumentRoot \/var\/www\/html/DocumentRoot \/var\/www\/html/' /etc/apache2/sites-available/000-default.conf && \
   sed -i 's/DocumentRoot \/var\/www\/html/DocumentRoot \/var\/www\/html/' /etc/apache2/sites-available/default-ssl.conf && \
