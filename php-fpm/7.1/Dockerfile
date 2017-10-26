@@ -1,4 +1,4 @@
-FROM php:7.1-fpm
+FROM php:7.1-apache
 
 RUN apt-get update && \
   apt-get install unzip wget -y && \
@@ -20,10 +20,13 @@ RUN apt-get update && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/
 
-RUN usermod -u 1000 www-data && \
+RUN sed -i 's/DocumentRoot \/var\/www\/html/DocumentRoot \/var\/www\/html/' /etc/apache2/sites-available/000-default.conf && \
+  sed -i 's/DocumentRoot \/var\/www\/html/DocumentRoot \/var\/www\/html/' /etc/apache2/sites-available/default-ssl.conf && \
+  usermod -u 1000 www-data && \
+  a2enmod rewrite && \
   chown -R www-data:www-data /var/www/html/
 
 WORKDIR /var/www/html
 VOLUME /var/www/html
 
-EXPOSE 9000
+EXPOSE 80
